@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Playframe - Lista para filmes, séries e jogos</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="icon" href="logo.png" type="image/png" sizes="64x64">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Outfit:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        .forgot-link { font-size: 0.8rem; color: var(--primary-color); text-decoration: none; display: block; margin-top: 5px; text-align: right; }
+        .forgot-link:hover { text-decoration: underline; }
+        .form-row { display: flex; gap: 15px; }
+        .form-row .form-group { margin-bottom: 0; }
+        .readonly-input { background-color: rgba(255, 255, 255, 0.05); color: #888; cursor: not-allowed; }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="logo-container">
+            <img src="logo-dark.png" alt="Playframe Logo" class="logo">
+        </div>
+        <nav>
+            <span id="user-info" class="hidden"></span>
+            <button id="toggle-theme" aria-label="Alternar tema">🌙</button>
+            <button id="logout-btn" class="hidden">Sair</button>
+        </nav>
+    </header>
+
+    <div class="top-bar" id="top-bar-nav">
+      <p class="intro-text">Every pixel, shared.</p>
+    </div>
+
+    <main>
+        <section id="auth-section" class="container">
+            <div class="auth-intro">
+                <h1>Sua lista de aventuras<br><span class="highlight">em um só lugar.</span></h1>
+                <p>Crie, gerencie e acompanhe tudo o que você assiste e joga. O Playframe é o seu catálogo pessoal para não perder o controle do seu entretenimento favorito.</p>
+                
+                <ul class="auth-features">
+                    <li>🎮 Acompanhe seus jogos favoritos</li>
+                    <li>🎬 Organize sua lista de filmes e séries</li>
+                    <li>⭐ Compartilhe uma Duo List com seu Player 2</li>
+                </ul>
+            </div>
+
+            <div class="auth-card">
+                <h2 id="auth-title">Acesse sua Conta</h2>
+                <p class="auth-message" id="auth-message" style="margin-bottom: 15px;">Faça login para acessar suas listas.</p>
+                
+                <!-- 1. FORMULÁRIO DE LOGIN/REGISTRO -->
+                <form id="auth-form">
+                    <div id="auth-extra-fields" class="form-row" style="display: none; margin-bottom: 15px;">
+                        <div class="form-group" style="flex: 1;">
+                            <label for="auth-name">Nome:</label>
+                            <input type="text" id="auth-name">
+                        </div>
+                        <div class="form-group" style="flex: 1;">
+                            <label for="auth-duo-code">Código Duo (Opcional):</label>
+                            <input type="text" id="auth-duo-code" placeholder="Ex: SenhaDuo">
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="auth-email">Email:</label>
+                        <input type="email" id="auth-email" required>
+                    </div>
+                    <div class="form-group" id="auth-password-group">
+                        <label for="auth-password">Senha:</label>
+                        <input type="password" id="auth-password" required>
+                        <a href="#" id="forgot-password-link" class="forgot-link">Esqueceu sua senha?</a>
+                    </div>
+                    <button type="submit" id="login-btn">Entrar</button>
+                    <button type="button" id="register-btn" style="display: none;">Criar Conta</button>
+                    
+                    <div class="auth-switch" id="auth-switch-container">
+                        <span id="auth-switch-text">Não tem uma conta ainda?</span> 
+                        <a href="#" id="toggle-auth-btn">Registre-se</a>
+                    </div>
+                </form>
+
+                <!-- 2. FORMULÁRIO DE RECUPERAÇÃO PASSO 1 -->
+                <form id="forgot-email-form" style="display: none;">
+                    <div class="form-group">
+                        <label for="reset-email-request">Qual o seu Email de cadastro?</label>
+                        <input type="email" id="reset-email-request" required>
+                    </div>
+                    <button type="submit" id="send-code-btn">Receber Código no E-mail</button>
+                    <div class="auth-switch">
+                        <a href="#" id="back-to-login-from-email-btn">Voltar para o Login</a>
+                    </div>
+                </form>
+
+                <!-- 3. FORMULÁRIO DE RECUPERAÇÃO PASSO 2 (Com E-mail e Confirmação de Senha) -->
+                <form id="reset-password-form" style="display: none;">
+                    <p style="font-size: 0.85rem; color: #aaa; margin-bottom: 15px;">Enviamos um código de 6 dígitos para o seu e-mail.</p>
+                    
+                    <div class="form-group">
+                        <label for="reset-email-final">Conta a ser recuperada:</label>
+                        <input type="email" id="reset-email-final" class="readonly-input" readonly>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="reset-security-code">Código de Segurança:</label>
+                        <input type="text" id="reset-security-code" placeholder="Ex: 123456" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="reset-new-password">Crie uma nova Senha:</label>
+                        <input type="password" id="reset-new-password" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="reset-confirm-password">Confirme a nova Senha:</label>
+                        <input type="password" id="reset-confirm-password" required>
+                    </div>
+                    
+                    <button type="submit" id="submit-reset-btn">Atualizar Senha</button>
+                    <div class="auth-switch">
+                        <a href="#" id="back-to-login-btn">Voltar para o Login</a>
+                    </div>
+                </form>
+            </div>
+        </section>
+
+        <!-- PAINEL DUO -->
+        <section id="duo-settings-section" class="container hidden" style="background: var(--bg-color); padding: 20px; border-radius: 12px; border: 1px solid var(--border-color); margin-bottom: 30px;">
+            <h3 style="margin-top: 0;">💞 Conexão Duo</h3>
+            <p style="font-size: 0.95rem; margin-bottom: 15px;">Um de vocês deve gerar o código, e o outro usa para vincular as contas.</p>
+            
+            <div style="display: flex; gap: 15px; align-items: center; flex-wrap: wrap; margin-bottom: 15px;">
+                <span style="font-size: 1.1rem;">Código Atual: <strong id="display-duo-code" style="color: var(--primary-color);">Nenhum</strong></span>
+                <button id="generate-duo-btn" style="padding: 6px 12px; border-radius: 6px; cursor: pointer; background: transparent; color: var(--text-color); border: 1px solid var(--primary-color); font-weight: bold; font-size: 0.9rem;">🎲 Gerar Novo Código</button>
+            </div>
+
+            <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+                <input type="text" id="update-duo-input" placeholder="Colar código recebido..." style="padding: 10px; border-radius: 6px; border: 1px solid var(--border-color); background: var(--card-bg); color: var(--text-color);">
+                <button id="update-duo-btn" style="padding: 10px 20px; border-radius: 6px; cursor: pointer; background: var(--primary-color); color: white; border: none; font-weight: bold;">Vincular Conta</button>
+            </div>
+            <p id="duo-update-message" style="color: #4CAF50; font-size: 0.9rem; margin-top: 10px; display: none;">Código atualizado com sucesso!</p>
+        </section>
+
+        <!-- ADICIONAR ITEM -->
+        <section id="add-item" class="container hidden">
+            <h2>Adicionar Novo Item</h2>
+            <form id="item-form">
+                <div class="form-group">
+                    <label for="item-name">Nome (Exato):</label>
+                    <input type="text" id="item-name" placeholder="Ex: The Last of Us ou Interestelar" required>
+                </div>
+                <div class="form-group">
+                    <label for="item-list-type">Salvar em:</label>
+                    <select id="item-list-type" required>
+                        <option value="individual">Minha Lista (Individual)</option>
+                        <option value="duo">Duo List (Compartilhada)</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="item-notes">Notes:</label>
+                    <textarea id="item-notes" rows="3"></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="item-type">Tipo de Item:</label>
+                    <select id="item-type" required>
+                        <option value="game">Jogo</option>
+                        <option value="movie">Filme</option>
+                        <option value="series">Série</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="item-status">Status:</label>
+                    <select id="item-status" required>
+                        <option value="to-watch-play">Para Ver/Jogar</option>
+                        <option value="watching-playing">Assistindo/Jogando</option>
+                        <option value="finished">Finalizado</option>
+                    </select>
+                </div>
+                <button type="submit">Adicionar à Lista</button>
+            </form>
+        </section>
+
+        <!-- SUAS LISTAS -->
+        <section id="item-list" class="container hidden">
+            <h2>Suas Listas</h2>
+            <div class="search-group">
+                <label for="search-input">Buscar:</label>
+                <input type="text" id="search-input" placeholder="Buscar por nome ou notas...">
+            </div>
+
+            <div class="tabs-container">
+                <div class="tabs-nav" id="status-tabs-nav">
+                    <button class="tab-button active" data-filter-status="all">Todos</button>
+                    <button class="tab-button" data-filter-status="to-watch-play">A Fazer</button>
+                    <button class="tab-button" data-filter-status="watching-playing">Em Progresso</button>
+                    <button class="tab-button" data-filter-status="finished">Concluídos</button>
+                </div>
+                
+                <div class="filters" style="display: flex; gap: 15px; flex-wrap: wrap;">
+                    <div>
+                        <label for="filter-list-visibility">Exibir:</label>
+                        <select id="filter-list-visibility">
+                            <option value="all">Ambas as Listas</option>
+                            <option value="individual">Minha Lista</option>
+                            <option value="duo">Duo List</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="filter-type">Filtrar por Tipo:</label>
+                        <select id="filter-type">
+                            <option value="all">Todos</option>
+                            <option value="game">Jogos</option>
+                            <option value="movie">Filmes</option>
+                            <option value="series">Séries</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div id="items-container" class="items-grid">
+                <p id="no-items-message">Nenhum item encontrado. Adicione um novo!</p>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2026 Playframe. Feito por Ingrid e Miguel. ♡</p>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
