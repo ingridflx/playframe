@@ -23,7 +23,10 @@ pool.connect((err, client, release) => {
 
 // Configuração do Carteiro (Nodemailer) - Usa os dados do seu arquivo .env
 const transporter = nodemailer.createTransport({
-    service: 'gmail',
+    host: 'smtp.gmail.com', // ou o host que você estiver usando
+    port: 465,
+    secure: true,
+    family: 4, // <--- ADICIONE ESSA LINHA AQUI
     auth: {
         user: process.env.EMAIL_USER,
         pass: process.env.EMAIL_PASS
